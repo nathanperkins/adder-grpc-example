@@ -28,11 +28,23 @@ docker-build: $(GENERATED)
 
 .PHONY: docker-run-server
 docker-run-server: docker-build docker-network
-	docker run --name adder-server --rm --network $(NETWORK) --env PORT=$(PORT) -p $(PORT):$(PORT) $(SERVER_TAG)
+	docker run \
+		--name adder-server \
+		--rm \
+		--network $(NETWORK) \
+		--env PORT=$(PORT) \
+		-p $(PORT):$(PORT) \
+		$(SERVER_TAG)
 
 .PHONY: docker-run-client
 docker-run-client: docker-build docker-network
-	docker run --name adder-client --rm --network $(NETWORK) $(CLIENT_TAG) $(SERVER_TAG):$(PORT) $(VALUE)
+	docker run \
+		--name adder-client \
+		--rm \
+		--network $(NETWORK) \
+		--env ENDPOINT=$(SERVER_TAG):$(PORT) \
+		--env VALUE=$(VALUE) \
+		$(CLIENT_TAG)
 
 .PHONY: docker-network
 docker-network:
