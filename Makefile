@@ -1,6 +1,7 @@
 PYTHON=python3
 VALUE=20
 SERVER_TAG=adder-server
+NETWORK=adder
 PORT=5000
 CLIENT_TAG=adder-client
 
@@ -25,10 +26,14 @@ docker-build: $(GENERATED)
 	docker build -f Dockerfile.server -t $(SERVER_TAG) .
 	docker build -f Dockerfile.client -t $(CLIENT_TAG) .
 
-.phony: docker-run-server
-docker-run-server: docker-build
-	docker run --name adder-server --rm --network adder -p $(PORT):$(PORT) $(SERVER_TAG) $(PORT)
+.PHONY: docker-run-server
+docker-run-server: docker-build docker-network
+	docker run --name adder-server --rm --network $(NETWORK) -p $(PORT):$(PORT) $(SERVER_TAG) $(PORT)
 
-.phony: docker-run-client
-docker-run-client: docker-build
-	docker run --name adder-client --rm --network adder $(CLIENT_TAG) $(SERVER_TAG):$(PORT) $(VALUE)
+.PHONY: docker-run-client
+docker-run-client: docker-build docker-network
+	docker run --name adder-client --rm --network $(NETWORK) $(CLIENT_TAG) $(SERVER_TAG):$(PORT) $(VALUE)
+
+.PHONY: docker-network
+docker-network:
+	docker network create $(NETWORK) 2>&1 | grep -v "already exists" || true
