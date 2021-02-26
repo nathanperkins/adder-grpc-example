@@ -12,8 +12,8 @@ def add_one(val):
 class AdderServicer(adder_pb2_grpc.AdderServicer):
     def AddOne(self, request, context):
         val = request.value
-        ret = add_one(request.value)
-        print(f"adding 1 to {val}: {ret}")
+        ret = add_one(val)
+        print(f"Server: adding 1 to {val} = {ret}")
         return adder_pb2.AddOneResponse(value=ret)
 
 def serve():
