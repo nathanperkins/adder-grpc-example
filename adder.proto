@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service Adder {
+    rpc AddOne(AddOneRequest) returns (AddOneResponse) {}
+}
+
+message AddOneRequest {
+    int64 value = 1;
+}
+
+message AddOneResponse {
+    int64 value = 1;
+}
