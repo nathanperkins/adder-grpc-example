@@ -1,5 +1,6 @@
 from concurrent import futures
 import logging
+import sys
 
 import grpc
 
@@ -16,14 +17,15 @@ class AdderServicer(adder_pb2_grpc.AdderServicer):
         print(f"Server: adding 1 to {val} = {ret}")
         return adder_pb2.AddOneResponse(value=ret)
 
-def serve():
+def serve(port):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     adder_pb2_grpc.add_AdderServicer_to_server(
         AdderServicer(), server)
-    server.add_insecure_port('[::]:5000')
+    server.add_insecure_port(f"[::]:{port}")
     server.start()
+    print("Server starting.", flush=True)
     server.wait_for_termination()
 
 if __name__ == '__main__':
     logging.basicConfig()
-    serve()
+    serve(port=sys.argv[1])
