@@ -1,4 +1,5 @@
 PYTHON=python3
+VALUE=20
 
 GENERATED= \
 	adder_pb2.py \
@@ -6,11 +7,11 @@ GENERATED= \
 
 .PHONY: run-server
 run-server: server.py $(GENERATED)
-	python3 $<
+	$(PYTHON) $<
 
 .PHONY: run-client
 run-client: client.py $(GENERATED)
-	python3 $< 20
+	$(PYTHON) $< $(VALUE)
 
 $(GENERATED): adder.proto
 	$(PYTHON) -m grpc_tools.protoc -I=. --python_out=. --grpc_python_out=. $^
