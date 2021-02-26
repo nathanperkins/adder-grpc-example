@@ -1,5 +1,6 @@
 from concurrent import futures
 import logging
+import os
 import sys
 
 import grpc
@@ -28,4 +29,9 @@ def serve(port):
 
 if __name__ == '__main__':
     logging.basicConfig()
-    serve(port=sys.argv[1])
+    port = os.environ.get('PORT')
+    if not port:
+        print("PORT must be provided by env var", file=sys.stderr)
+        sys.exit(1)
+
+    serve(port)

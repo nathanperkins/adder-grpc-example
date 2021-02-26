@@ -28,7 +28,7 @@ docker-build: $(GENERATED)
 
 .PHONY: docker-run-server
 docker-run-server: docker-build docker-network
-	docker run --name adder-server --rm --network $(NETWORK) -p $(PORT):$(PORT) $(SERVER_TAG) $(PORT)
+	docker run --name adder-server --rm --network $(NETWORK) --env PORT=$(PORT) -p $(PORT):$(PORT) $(SERVER_TAG)
 
 .PHONY: docker-run-client
 docker-run-client: docker-build docker-network
