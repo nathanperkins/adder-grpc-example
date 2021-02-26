@@ -1,10 +1,13 @@
 import logging
+import os
 import sys
 
 import grpc
 
 import adder_pb2
 import adder_pb2_grpc
+
+_SECURE = os.environ.get("SECURE")
 
 if __name__ == '__main__':
     logging.basicConfig()
@@ -21,8 +24,18 @@ if __name__ == '__main__':
             file=sys.stderr)
         sys.exit(1)
 
-    with grpc.insecure_channel(endpoint) as channel:
+    if _SECURE and _SECURE.upper() == "TRUE":
+        print("Using secure channel")
+        channel = grpc.secure_channel(endpoint, grpc.ssl_channel_credentials())
+    else:
+        print("Using insecure channel")
+        channel = grpc.insecure_channel(endpoint)
+
+    try:
         stub = adder_pb2_grpc.AdderStub(channel)
         req = adder_pb2.AddOneRequest(value=value)
         res = stub.AddOne(req)
         print(f"Client: adding 1 to {value} = {res.value}")
+    except Exception as err:
+        print(f"Failed to AddOne: {err}", file=sys.stderr)
+        sys.exit(1)
